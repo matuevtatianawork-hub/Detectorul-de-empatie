@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Detectorul de Empatie – Super-eroii prieteniei online și offline</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none; /* Evită selectarea textului pe mobil, dar lăsăm lizibil */
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #1e2b6e 0%, #0f1a3f 100%);
+            font-family: 'Comic Neue', 'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', 'Poppins', 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Container principal joc */
+        .game-container {
+            max-width: 800px;
+            width: 100%;
+            background: #fef9e6;
+            border-radius: 70px;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3), inset 0 1px 4px rgba(255, 255, 255, 0.8);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* header decorativ */
+        .hero-header {
+            background: #ffb347;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            padding: 20px 20px 18px;
+            text-align: center;
+            border-bottom: 6px solid #ffdd99;
+        }
+
+        .hero-header h1 {
+            margin: 0;
+            font-size: 2.1rem;
+            color: #2d1b00;
+            text-shadow: 3px 3px 0 #ffd58c;
+            letter-spacing: -0.5px;
+            word-break: break-word;
+        }
+
+        .hero-header p {
+            margin: 8px 0 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #fff0c0;
+            display: inline-block;
+            padding: 5px 16px;
+            border-radius: 50px;
+            color: #a55100;
+        }
+
+        /* zona de conținut */
+        .game-content {
+            padding: 28px 24px 32px;
+        }
+
+        /* ecran start */
+        .start-screen {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .start-illustration {
+            font-size: 5rem;
+            background: #e6ddb3;
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 0 #b38b40;
+            margin-bottom: 10px;
+        }
+
+        .btn-start {
+            background: #3bb08b;
+            border: none;
+            font-size: 2rem;
+            font-weight: bold;
+            padding: 18px 35px;
+            border-radius: 60px;
+            color: white;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #1e6b4e;
+            transition: 0.07s linear;
+            letter-spacing: 1px;
+        }
+
+        .btn-start:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #1e6b4e;
+        }
+
+        /* întrebare card */
+        .quiz-card {
+            background: #ffffffdd;
+            backdrop-filter: blur(2px);
+            border-radius: 55px;
+            padding: 20px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .situation-text {
+            background: #fff2df;
+            border-radius: 48px;
+            padding: 22px 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            color: #27221f;
+            line-height: 1.4;
+            border: 2px solid #ffcd94;
+            margin-bottom: 30px;
+            word-break: break-word;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            background: #c9e9ff;
+            padding: 10px 16px;
+            border-radius: 50px;
+            margin-bottom: 25px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 15px 0 20px;
+        }
+
+        .empathy-btn {
+            flex: 1;
+            min-width: 160px;
+            background: #ffce6e;
+            border: none;
+            padding: 18px 12px;
+            font-size: 1.6rem;
+            font-weight: bold;
+            font-family: inherit;
+            border-radius: 100px;
+            color: #382008;
+            cursor: pointer;
+            transition: 0.05s linear;
+            box-shadow: 0 7px 0 #b97f2e;
+            text-align: center;
+        }
+
+        .lack-btn {
+            background: #d9b48b;
+            box-shadow: 0 7px 0 #8b5a2e;
+            color: #2c1a07;
+        }
+
+        .empathy-btn:active, .lack-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 3px 0 #7e5825;
+        }
+
+        .feedback-area {
+            background: #ebf5e8;
+            border-radius: 45px;
+            padding: 12px 20px;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            text-align: center;
+            border-left: 12px solid #6ab04c;
+            font-weight: 500;
+        }
+
+        .next-btn {
+            background: #4d77cf;
+            border: none;
+            font-size: 1.4rem;
+            font-weight: bold;
+            padding: 14px 24px;
+            border-radius: 60px;
+            color: white;
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #29407a;
+            transition: 0.05s linear;
+            margin-top: 15px;
+        }
+
+        .next-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #29407a;
+        }
+
+        .score-final {
+            text-align: center;
+        }
+
+        .score-box {
+            background: #fad974;
+            border-radius: 60px;
+            padding: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .play-again {
+            background: #e67e22;
+            border: none;
+            padding: 14px 30px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 80%;
+            box-shadow: 0 6px 0 #b45f1b;
+        }
+
+        footer {
+            background: #ffe0b5;
+            text-align: center;
+            padding: 12px;
+            font-size: 0.8rem;
+            color: #714f1e;
+        }
+
+        @media (max-width: 550px) {
+            .game-content {
+                padding: 18px;
+            }
+            .situation-text {
+                font-size: 1.2rem;
+                padding: 16px;
+            }
+            .empathy-btn, .lack-btn {
+                font-size: 1.3rem;
+                padding: 14px;
+                min-width: 130px;
+            }
+            .hero-header h1 {
+                font-size: 1.6rem;
+            }
+        }
+
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="game-container" id="gameApp">
+    <div class="hero-header">
+        <h1>🦸‍♀️ Detectorul de Empatie 🦸‍♂️</h1>
+        <p>Super-eroii prieteniei online & offline</p>
+    </div>
+    <div class="game-content" id="dynamicContent">
+        <!-- conținut generat de js -->
+    </div>
+    <footer>🤝 Alege cu inima! Fii eroul empatiei!</footer>
+</div>
+
+<script>
+    // ---------- Baza de date cu situații (empatie corectă TRUE / FALSE) ----------
+    // Pentru a face răspunsurile corecte să nu fie mereu pe același buton,
+    // vom randomiza ordinea butoanelor la fiecare întrebare.
+    // Vom păstra întrebările fixe, iar la afișare vom decide dacă butonul "Empatie" apare în stânga sau dreapta
+    // (sau va schimba textul între ele? Nu, pentru claritate butoanele sunt "Empatie" și "Lipsă de empatie"
+    // însă răspunsul corect este un boolean. Pentru a evita ca elevul să apese mereu același buton fizic,
+    // vom randomiza poziția celor două butoane în DOM la fiecare întrebare nouă (fără a schimba semnificația,
+    // dar elevul trebuie să citească și să decidă, nu poate memora "butonul din stânga e bun").
+    // De asemenea vom include 10 situații, dintre care minim 2 online.
+    
+    const SITUATII = [
+        { text: "👧 La școală, un coleg nou plânge pentru că nu își găsește pachetul cu mâncare. Tu te uiți la el și nu faci nimic, trecând mai departe.", esteEmpatic: false, explicatie: "Lipsă de empatie înseamnă să ignori pe cineva trist. Un super-erou al empatiei ar întreba dacă are nevoie de ajutor." },
+        { text: "🧸 La ora de desen, un prieten greșește și toată lumea râde puternic de el. Tu alegi să nu râzi și îi spui 'E în regulă, și eu mai greșesc'.", esteEmpatic: true, explicatie: "Bravo! Ai arătat empatie sprijinindu-ți colegul în loc să râzi. Așa se comportă un prieten adevărat." },
+        { text: "💻 Pe un grup al clasei, un coleg postează un mesaj trist pentru că i-a murit cățelul. Tu scrii în comentarii: 'Îmi pare rău, știu că e dureros. Dacă vrei să vorbim, sunt aici.'", esteEmpatic: true, explicatie: "Super! Empatia online înseamnă să oferi cuvinte calde și susținere. Ești un erou digital!" },
+        { text: "💬 Vezi pe rețea o postare în care cineva a scris comentarii foarte urâte la adresa unui coleg. Tu dai un like acelui comentariu răutăcios.", esteEmpatic: false, explicatie: "Dând like unui mesaj jignitor, încurajezi răutatea. Un erou al empatiei raportează sau scrie ceva frumos." },
+        { text: "🏀 La ora de sport, un copil mai puțin priceput ratează o aruncare. Unii colegi chicotesc, dar tu strigi 'Bravo că ai încercat! Data viitoare vei reuși!'.", esteEmpatic: true, explicatie: "Excelent! Încurajarea este o formă puternică de empatie. Ai făcut să se simtă mai bine." },
+        { text: "🎮 În timpul unui joc online, un jucător din echipă greșește și începe să se excuseze. Îi scrii: 'Se întâmplă, hai să încercăm din nou!'", esteEmpatic: true, explicatie: "Corect! Cuvintele amabile online construiesc prietenii. Empatie 100% !" },
+        { text: "📵 În pauză, un prieten cade și se lovește. Tu începi să râzi tare cu alți colegi, fără să îl ajuți.", esteEmpatic: false, explicatie: "A râde de suferința altcuiva nu este deloc empatic. Un erou întreabă 'Ești bine? Te ajut?'." },
+        { text: "🌐 Un coleg postează o creație artistică pe care a muncit mult, dar primește un comentariu răutăcios. Tu îi trimiți un mesaj privat cu încurajări și îi spui că ție îți place munca lui.", esteEmpatic: true, explicatie: "Perfect! Ai umplut spațiul online cu bunătate. Asta înseamnă empatie digitală!" },
+        { text: "👫 La joacă, o fată este exclusă de un grup. Tu o inviți să se joace cu tine și îi spui 'Vino alături de noi!'", esteEmpatic: true, explicatie: "Minunat! Ai inclus un copil singur, iar asta este o faptă eroică de empatie." },
+        { text: "📱 Un prieten postează o fotografie cu el, iar cineva scrie 'Arăți urât azi'. Tu alegi să nu spui nimic și să dai scroll mai departe.", esteEmpatic: false, explicatie: "Tăcerea în fața răutății nu este empatică. Un erou poate să scrie ceva drăguț sau să ia apărarea." }
+    ];
+
+    // Verificare ca minim 2 situații online (sa avem un mix)
+    // Asigurăm prin text: avem mesaje cu 💻 💬 🌐 📱 care reprezintă online >2, ok.
+
+    let currentIndex = 0;
+    let score = 0;
+    let gameActive = false;     // dacă suntem în joc activ (întrebări)
+    let waitingForNext = false; // după răspuns, așteptăm click next
+    let currentQuestionObj = null;
+    let currentCorrectAnswer = null;
+    let currentButtonOrder = []; // 'empathy' sau 'lack' in ordinea afisata (0=stanga,1=dreapta)
+    let selectedAnswer = null;   // pentru a nu răspunde de 2 ori
+
+    // elemente DOM
+    const contentDiv = document.getElementById("dynamicContent");
+
+    // Funcție de randomizare ordine butoane (empatie / lipsă)
+    function randomizeButtonOrder() {
+        // returnează un array de două string-uri: ['empathy','lack'] sau ['lack','empathy']
+        return Math.random() < 0.5 ? ['empathy', 'lack'] : ['lack', 'empathy'];
+    }
+
+    // Render ecran start
+    function renderStartScreen() {
+        gameActive = false;
+        contentDiv.innerHTML = `
+            <div class="start-screen">
+                <div class="start-illustration">
+                    🦸‍♀️🫶🦸‍♂️
+                </div>
+                <p style="font-size:1.3rem; background:#feeed6; padding:12px; border-radius:40px;">
+                    Detectează empatia în situații reale și online!<br>
+                    Alege răspunsul corect și câștigă titlul de Super-erou!
+                </p>
+                <button class="btn-start" id="startGameBtn">⭐ Începe ⭐</button>
+                <div style="font-size:1rem; background:#ffe7bc; border-radius:30px; padding:12px; margin-top:10px;">
+                    🤗 10 întrebări despre prietenie și bunătate.
+                </div>
+            </div>
+        `;
+        const startBtn = document.getElementById("startGameBtn");
+        if (startBtn) startBtn.addEventListener("click", () => initGame());
+    }
+
+    // Inițializare joc / resetare
+    function initGame() {
+        currentIndex = 0;
+        score = 0;
+        gameActive = true;
+        waitingForNext = false;
+        selectedAnswer = null;
+        // amestec întrebările? opțional pentru varietate, dar păstrăm ordinea pentru simplitate, dar poate fi util
+        // O sa le păstrăm ordinea dată, dar elevii nu vor memora răspunsul ptc buton ordine aleatoare.
+        loadQuestion();
+    }
+
+    // Încarcă întrebarea curentă
+    function loadQuestion() {
+        if (!gameActive) return;
+        if (currentIndex >= SITUATII.length) {
+            endGame();
+            return;
+        }
+        selectedAnswer = null;
+        waitingForNext = false;
+        currentQuestionObj = SITUATII[currentIndex];
+        currentCorrectAnswer = currentQuestionObj.esteEmpatic; // true = Empatie corect, false = Lipsă corect
+        
+        // randomizare ordine butoane (pentru a nu fi mereu același buton ca răspuns corect)
+        currentButtonOrder = randomizeButtonOrder();
+        // redare interfață întrebare
+        renderQuestionCard();
+    }
+
+    // Construiește cardul cu întrebare și butoane în ordinea randomizată
+    function renderQuestionCard() {
+        const situatie = currentQuestionObj.text;
+        // Construim butoanele conform currentButtonOrder
+        // mapare: 'empathy' -> text "🤝 Empatie", 'lack' -> text "😞 Lipsă de empatie"
+        const btnMap = {
+            'empathy': { text: '🤝 Empatie', value: true },
+            'lack': { text: '⚠️ Lipsă de empatie', value: false }
+        };
+        const leftBtn = btnMap[currentButtonOrder[0]];
+        const rightBtn = btnMap[currentButtonOrder[1]];
+
+        // afișăm progres
+        const progress = `${currentIndex+1} / ${SITUATII.length}`;
+        
+        contentDiv.innerHTML = `
+            <div class="quiz-card">
+                <div class="progress-info">
+                    <span>🔍 Situația ${progress}</span>
+                    <span>⭐ Scor: ${score}</span>
+                </div>
+                <div class="situation-text">
+                    ${situatie}
+                </div>
+                <div class="button-group" id="buttonGroup">
+                    <button class="empathy-btn" data-value="${leftBtn.value}" data-type="${currentButtonOrder[0]}" id="leftBtn">${leftBtn.text}</button>
+                    <button class="empathy-btn lack-btn" data-value="${rightBtn.value}" data-type="${currentButtonOrder[1]}" id="rightBtn">${rightBtn.text}</button>
+                </div>
+                <div id="feedbackArea" class="feedback-area" style="display: none;"></div>
+                <button id="nextQuestionBtn" class="next-btn" style="display: none;">➡️ Următoarea situație</button>
+            </div>
+        `;
+        
+        // atașare evenimente răspunsuri
+        const left = document.getElementById("leftBtn");
+        const right = document.getElementById("rightBtn");
+        if (left) left.addEventListener("click", () => handleAnswer(left.dataset.value === 'true'));
+        if (right) right.addEventListener("click", () => handleAnswer(right.dataset.value === 'true'));
+    }
+    
+    function handleAnswer(selectedValueBool) {
+        if (!gameActive) return;
+        if (waitingForNext) return;
+        if (selectedAnswer !== null) return; // deja răspuns
+        
+        const isCorrect = (selectedValueBool === currentCorrectAnswer);
+        selectedAnswer = selectedValueBool;
+        
+        // Actualizare scor
+        if (isCorrect) {
+            score++;
+        }
+        
+        // Construim feedback educativ
+        let feedbackMsg = "";
+        if (isCorrect) {
+            feedbackMsg = `✅ BRAVO! ${currentQuestionObj.explicatie}`;
+        } else {
+            const corectEra = currentCorrectAnswer ? "Empatie" : "Lipsă de empatie";
+            feedbackMsg = `❌ Oops! Răspuns greșit. Răspunsul corect era: ${corectEra}. ${currentQuestionObj.explicatie}`;
+        }
+        
+        // afișează feedback și butonul next
+        const feedbackDiv = document.getElementById("feedbackArea");
+        const nextBtn = document.getElementById("nextQuestionBtn");
+        if (feedbackDiv) {
+            feedbackDiv.style.display = "block";
+            feedbackDiv.innerHTML = `<span style="font-size:1.2rem;">💡 ${feedbackMsg}</span>`;
+        }
+        
+        // Dezactivează butoanele de răspuns (disable vizual, dar și prevenim dublu click)
+        const leftBtnElem = document.getElementById("leftBtn");
+        const rightBtnElem = document.getElementById("rightBtn");
+        if (leftBtnElem) leftBtnElem.disabled = true;
+        if (rightBtnElem) rightBtnElem.disabled = true;
+        if (leftBtnElem) leftBtnElem.style.opacity = "0.6";
+        if (rightBtnElem) rightBtnElem.style.opacity = "0.6";
+        
+        if (nextBtn) {
+            nextBtn.style.display = "block";
+            nextBtn.addEventListener("click", () => nextQuestion(), { once: true });
+        }
+        waitingForNext = true;
+        
+        // Actualizează scorul în header (deși se reimprospătează la urmatoarea întrebare, dar dinamic)
+        const progressDiv = document.querySelector(".progress-info");
+        if (progressDiv) {
+            progressDiv.innerHTML = `<span>🔍 Situația ${currentIndex+1} / ${SITUATII.length}</span>
+                                     <span>⭐ Scor: ${score}</span>`;
+        }
+    }
+    
+    function nextQuestion() {
+        if (!gameActive) return;
+        if (!waitingForNext) return; // nu e cazul dar siguranta
+        currentIndex++;
+        if (currentIndex < SITUATII.length) {
+            // trecem la următoarea întrebare
+            loadQuestion();
+        } else {
+            endGame();
+        }
+    }
+    
+    function endGame() {
+        gameActive = false;
+        // calculează mesaj final
+        let mesajFinal = "";
+        const total = SITUATII.length;
+        if (score === total) mesajFinal = "🌟 Perfect! Ești un adevărat Super-erou al Empatiei! 🌟";
+        else if (score >= total-2) mesajFinal = "🦸‍♂️ Fantastic! Ești pe cale să devii un erou al empatiei! Mai poți îmbunătăți! 🦸‍♀️";
+        else if (score >= total/2) mesajFinal = "🌱 Bun început! Antrenează-ți inima să fie și mai empatică! 🌱";
+        else mesajFinal = "💪 Nu te opri! Empatia se învață, iar tu poți deveni mai bun de acum. Recită situațiile! 💪";
+        
+        contentDiv.innerHTML = `
+            <div class="score-final">
+                <div class="score-box">
+                    🏆 Scor final: ${score} din ${total} 🏆
+                </div>
+                <div style="background:#ffe0b5; border-radius: 42px; padding:20px; margin:10px 0;">
+                    <p style="font-size:1.5rem; font-weight:bold;">✨ ${mesajFinal} ✨</p>
+                    <p style="font-size:1.2rem;">🎉 Ești ${score === total ? "Super-eroul Empatiei!" : "un bun detectiv al empatiei! Practică pentru a deveni erou!"} 🎉</p>
+                </div>
+                <button class="play-again" id="restartGameBtn">🔄 Joacă din nou</button>
+                <div style="margin-top: 20px; font-size:1rem;">🤗 Fii erou în viața reală și pe internet!</div>
+            </div>
+        `;
+        const restartBtn = document.getElementById("restartGameBtn");
+        if (restartBtn) restartBtn.addEventListener("click", () => {
+            initGame();
+        });
+    }
+    
+    // Inițializare la încărcare
+    renderStartScreen();
+</script>
+</body>
+</html>
