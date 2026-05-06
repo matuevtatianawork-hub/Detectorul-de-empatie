@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Super-eroul Siguranței – Test Final</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* only for interface cleanness, text select still possible */
+        }
+
+        body {
+            background: linear-gradient(145deg, #0b2b5e 0%, #123e7c 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Fredoka One', 'Comic Neue', 'Comic Neue', system-ui, -apple-system, 'Nunito', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* CARD PRINCIPAL */
+        .quiz-container {
+            max-width: 900px;
+            width: 100%;
+            background: #fef9e8;
+            border-radius: 72px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* antet eroic */
+        .hero-header {
+            background: linear-gradient(135deg, #ffb347, #ff7e05);
+            padding: 24px 28px 20px 28px;
+            text-align: center;
+            border-bottom: 6px solid gold;
+        }
+
+        .hero-header h1 {
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            color: #2d1b00;
+            text-shadow: 3px 3px 0 #ffd966;
+            font-weight: 800;
+            word-break: break-word;
+        }
+
+        .hero-header p {
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #2c2b26;
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 40px;
+            color: #ffdd99;
+            margin-top: 12px;
+            box-shadow: inset 0 -1px 0 rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* zona de scor si progres */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #2e3b3e;
+            padding: 12px 28px;
+            color: white;
+            font-weight: bold;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #ffb347;
+        }
+
+        .score-box, .q-counter {
+            background: #1f2a2e;
+            padding: 8px 18px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            box-shadow: inset 0 1px 2px #3e4b4f, 0 2px 4px black;
+        }
+
+        .score-box span, .q-counter span {
+            color: #ffcc77;
+            margin-right: 8px;
+        }
+
+        /* întrebări */
+        .question-area {
+            padding: 30px 30px 20px 30px;
+        }
+
+        .question-text {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: #1f3a4b;
+            background: #fffbee;
+            padding: 15px 20px;
+            border-radius: 54px;
+            margin-bottom: 30px;
+            border-left: 12px solid #ff9900;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.05);
+        }
+
+        /* optiuni */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background: white;
+            border-radius: 100px;
+            border: 2px solid #e0d6c6;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: #2c3e2f;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+        }
+
+        .option:hover {
+            background: #fff2df;
+            transform: scale(0.99);
+            border-color: #ffaa33;
+        }
+
+        /* indicator de selectie radio custom */
+        .option input {
+            margin-right: 18px;
+            transform: scale(1.2);
+            accent-color: #ff7e05;
+            cursor: pointer;
+        }
+
+        .option label {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        /* butoane */
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin: 15px 0 10px;
+        }
+
+        button {
+            background: #ffaa33;
+            border: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.1s linear;
+            color: #2c1d07;
+            box-shadow: 0 5px 0 #b4621a;
+            flex: 1;
+            text-align: center;
+        }
+
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #b4621a;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .reset-btn {
+            background: #3f6a8c;
+            box-shadow: 0 5px 0 #1e405b;
+            color: white;
+        }
+
+        /* feedback section */
+        .feedback {
+            background: #e9f3e6;
+            border-radius: 36px;
+            padding: 14px 22px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            border-left: 8px solid #7cb342;
+            color: #2a5312;
+        }
+
+        /* rezultat final */
+        .result-screen {
+            text-align: center;
+            padding: 30px 25px 40px;
+        }
+
+        .result-badge {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .final-message {
+            font-size: 1.9rem;
+            font-weight: 800;
+            margin: 20px 0;
+        }
+
+        .level-desc {
+            background: #ead6b3;
+            border-radius: 44px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .question-text {
+                font-size: 1.25rem;
+            }
+            .hero-header h1 {
+                font-size: 1.7rem;
+            }
+            .option {
+                font-size: 0.9rem;
+                padding: 10px 14px;
+            }
+            .stats-bar {
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quizApp">
+    <div class="hero-header">
+        <h1>🦸‍♂️ SUPER-EROUL SIGURANȚEI 🦸‍♀️</h1>
+        <p>TEST FINAL – devino campionul siguranței!</p>
+    </div>
+    <div class="stats-bar">
+        <div class="score-box"><span>⭐ SCOR:</span> <span id="scoreValue">0</span> / 120</div>
+        <div class="q-counter"><span>📋 ÎNTREBARE:</span> <span id="currentQNumber">1</span> / <span id="totalQ">12</span></div>
+    </div>
+
+    <div id="dynamicContent">
+        <!-- intrebare curenta va fi randata aici -->
+    </div>
+</div>
+
+<script>
+    // ===================== BANCA DE ÎNTREBĂRI (12 întrebări mixte) ====================
+    const QUESTIONS = [
+        { // 0
+            text: "Prietenul tău plânge pentru că a pierdut un concurs. Ce arată empatie?",
+            type: "single", // multiple choice
+            options: [
+                "Îi spui 'Nu e nimic, data viitoare câștigi' și pleci repede.",
+                "Îl asculți, îi spui că înțelegi că e trist și îl întrebi cum poți ajuta.",
+                "Râzi de el că a pierdut, doar e doar un joc.",
+                "Îi spui să nu mai fie supărat și îi faci poze."
+            ],
+            correct: 1, // index 1
+            points: 10
+        },
+        { // 1
+            text: "Conflictul este întotdeauna la fel ca violența. (Adevărat sau Fals)",
+            type: "truefalse",
+            options: ["Adevărat", "Fals"],
+            correct: 1,  // fals
+            points: 10
+        },
+        { // 2
+            text: "Care dintre următoarele reacții arată AUTOCONTROL când ești foarte furios?",
+            type: "single",
+            options: [
+                "Lovești peretele sau țipi la cel din față.",
+                "Îți numeri până la 10 și iei o pauză să te calmezi.",
+                "Arunci cu obiecte prin cameră.",
+                "Îți învinovățești prietenul imediat."
+            ],
+            correct: 1,
+            points: 10
+        },
+        { // 3
+            text: "Care este ordinea corectă a pașilor în tehnica STOP – RESPIR – GÂNDESC – VORBESC?",
+            type: "single",
+            options: [
+                "VORBESC – GÂNDESC – RESPIR – STOP",
+                "STOP → RESPIR → GÂNDESC → VORBESC",
+                "GÂNDESC – STOP – RESPIR – VORBESC",
+                "RESPIR – STOP – VORBESC – GÂNDESC"
+            ],
+            correct: 1, // a doua varianta
+            points: 10
+        },
+        { // 4
+            text: "Când cineva postează o poză de-a ta fără acord, ce regulă de siguranță online încalci?",
+            type: "single",
+            options: [
+                "Regula parolei secrete",
+                "Regula intimității și a dreptului la propria imagine",
+                "Regula de a nu sta prea mult la calculator",
+                "Regula jocurilor online"
+            ],
+            correct: 1,
+            points: 10
+        },
+        { // 5
+            text: "Cyberbullying-ul înseamnă doar să spui cuvinte urâte în realitate, nu și pe internet.",
+            type: "truefalse",
+            options: ["Adevărat", "Fals"],
+            correct: 1, // fals
+            points: 10
+        },
+        { // 6
+            text: "Un coleg răspândește zvonuri false despre tine pe rețele sociale. Ce variantă este corectă?",
+            type: "single",
+            options: [
+                "Răspund cu mesaje și mai urâte ca să mă răzbun.",
+                "Ignor, dar plâng în fiecare seară fără să cer ajutor.",
+                "Salvez capturi de ecran, blochez persoana și vorbesc cu un adult (părinte/învățător).",
+                "Postez și eu ceva rău despre el, la rândul meu."
+            ],
+            correct: 2,
+            points: 10
+        },
+        { // 7
+            text: "Ce faci dacă vezi că un prieten îl împinge intenționat pe altul la recreație? (identificare reacție corectă)",
+            type: "single",
+            options: [
+                "Mă bag și eu să lovesc pe cineva.",
+                "Strig la toți să vadă, dar nu fac nimic.",
+                "Îi despart calm, le spun să se oprească și anunț un profesor.",
+                "FilmEZ cu telefonul și pun pe rețele pentru like-uri."
+            ],
+            correct: 2,
+            points: 10
+        },
+        { // 8
+            text: "Atunci când ești nervos și simți că explodezi, care dintre acestea este un exemplu de autocontrol eficient?",
+            type: "single",
+            options: [
+                "Lovești ușa când iesi din cameră.",
+                "Inspiri adânc de 3 ori, apoi spui 'Am nevoie de o pauză'.",
+                "Îți acuzi părinții pe loc că totul e vina lor.",
+                "Te izolezi și nu mai vorbești cu nimeni o săptămână."
+            ],
+            correct: 1,
+            points: 10
+        },
+        { // 9
+            text: "Empatia înseamnă:",
+            type: "single",
+            options: [
+                "Să fii mereu de acord cu ceilalți",
+                "Să înțelegi ce simte altcineva și să îți pese",
+                "Să câștigi mereu la jocuri",
+                "Să nu asculți pe nimeni"
+            ],
+            correct: 1,
+            points: 10
+        },
+        { // 10
+            text: "Când joci un joc online și un străin îți cere parola contului, ce faci?",
+            type: "single",
+            options: [
+                "I-o dai, e doar un joc, nu e periculos.",
+                "Îl întreb de ce are nevoie.",
+                "Nu îi dau niciodată, spun imediat unui adult și raportez jucătorul.",
+                "Îi dau o parolă falsă, ca să vadă că nu merge."
+            ],
+            correct: 2,
+            points: 10
+        },
+        { // 11
+            text: "Adevărat sau Fals: A folosi tehnica 'STOP – RESPIR – GÂNDESC – VORBESC' ajută să rezolvi conflictele fără violență.",
+            type: "truefalse",
+            options: ["Adevărat", "Fals"],
+            correct: 0,
+            points: 10
+        }
+    ];
+
+    // variabile de stare
+    let currentIndex = 0;          // intrebarea index 0-11
+    let userAnswers = new Array(QUESTIONS.length).fill(null); // stocheaza indexul optiunii selectate (pentru tipuri single/radios)
+    let quizCompleted = false;
+    let totalPointsEarned = 0;
+
+    // referinte DOM
+    const dynamicContainer = document.getElementById('dynamicContent');
+    const scoreSpan = document.getElementById('scoreValue');
+    const currentQSpan = document.getElementById('currentQNumber');
+    const totalQSpan = document.getElementById('totalQ');
+
+    function updateHeaderStats() {
+        scoreSpan.innerText = totalPointsEarned;
+        currentQSpan.innerText = currentIndex + 1;
+        totalQSpan.innerText = QUESTIONS.length;
+    }
+
+    // functie calcul scor bazat pe raspunsurile salvate
+    function computeTotalScore() {
+        let sum = 0;
+        for (let i = 0; i < QUESTIONS.length; i++) {
+            const q = QUESTIONS[i];
+            const userChoice = userAnswers[i];
+            if (userChoice !== null && userChoice === q.correct) {
+                sum += q.points;
+            }
+        }
+        return sum;
+    }
+
+    // actualizeaza scorul in UI si variabila globala
+    function refreshScore() {
+        totalPointsEarned = computeTotalScore();
+        scoreSpan.innerText = totalPointsEarned;
+    }
+
+    // salveaza raspunsul pentru intrebarea curenta
+    function saveCurrentAnswer(selectedIndex) {
+        if (quizCompleted) return;
+        userAnswers[currentIndex] = selectedIndex;
+        refreshScore();
+        renderCurrentQuestion(); // re-render pentru a marca optiunea selectata
+    }
+
+    // functie render intrebare curenta
+    function renderCurrentQuestion() {
+        if (quizCompleted) {
+            renderFinalScreen();
+            return;
+        }
+
+        const qData = QUESTIONS[currentIndex];
+        const savedAnswer = userAnswers[currentIndex]; // poate fi null sau index
+
+        // construim HTML-ul variabil
+        let optionsHtml = '';
+        if (qData.type === 'truefalse' || qData.type === 'single') {
+            qData.options.forEach((opt, idx) => {
+                const isChecked = (savedAnswer === idx);
+                const inputType = 'radio';
+                const nameAttr = `q_${currentIndex}`;
+                optionsHtml += `
+                    <div class="option" data-opt-index="${idx}">
+                        <input type="${inputType}" name="${nameAttr}" id="opt_${idx}" value="${idx}" ${isChecked ? 'checked' : ''}>
+                        <label for="opt_${idx}">${opt}</label>
+                    </div>
+                `;
+            });
+        }
+
+        const html = `
+            <div class="question-area">
+                <div class="question-text">
+                    ⚡ ${qData.text}
+                </div>
+                <div class="options-list" id="optionsContainer">
+                    ${optionsHtml}
+                </div>
+                <div class="action-buttons">
+                    <button id="prevBtn" ${currentIndex === 0 ? 'disabled' : ''}>◀ ÎNAPOI</button>
+                    <button id="nextBtn" ${currentIndex === QUESTIONS.length-1 ? 'FINALIZEAZĂ ▶' : 'ÎNAINTE ▶'}>${currentIndex === QUESTIONS.length-1 ? '🏆 FINALIZEAZĂ' : 'ÎNAINTE ▶'}</button>
+                </div>
+                <div class="feedback" id="feedbackMsg">
+                    💡 Selectează un răspuns! Fiecare întrebare aduce puncte pentru titlul de SUPER-EROU.
+                </div>
+            </div>
+        `;
+
+        dynamicContainer.innerHTML = html;
+
+        // adaugam event listeners pe optiuni
+        const optionDivs = document.querySelectorAll('.option');
+        optionDivs.forEach(div => {
+            const radio = div.querySelector('input');
+            if (radio) {
+                radio.addEventListener('change', (e) => {
+                    e.stopPropagation();
+                    const selectedVal = parseInt(radio.value);
+                    saveCurrentAnswer(selectedVal);
+                });
+                // permite click pe tot div-ul
+                div.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'INPUT') {
+                        radio.checked = true;
+                        const changeEvent = new Event('change', { bubbles: true });
+                        radio.dispatchEvent(changeEvent);
+                    }
+                });
+            }
+        });
+
+        // butoanele navigare
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderCurrentQuestion();
+                    updateHeaderStats();
+                }
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                // verificam daca utilizatorul a selectat un raspuns la intrebarea curenta
+                const currentSaved = userAnswers[currentIndex];
+                if (currentSaved === null || currentSaved === undefined) {
+                    showTemporaryFeedback("❗ Alege un răspuns înainte de a continua, erou!", "warning");
+                    return;
+                }
+                if (currentIndex === QUESTIONS.length - 1) {
+                    // finalizare test
+                    finishQuiz();
+                } else {
+                    currentIndex++;
+                    renderCurrentQuestion();
+                    updateHeaderStats();
+                }
+            });
+        }
+
+        updateHeaderStats();
+    }
+
+    function showTemporaryFeedback(msg, type = "info") {
+        const feedbackDiv = document.getElementById('feedbackMsg');
+        if (feedbackDiv) {
+            const originalText = feedbackDiv.innerHTML;
+            feedbackDiv.innerHTML = `⚠️ ${msg}`;
+            feedbackDiv.style.background = "#ffe0b5";
+            feedbackDiv.style.borderLeftColor = "#e67e22";
+            setTimeout(() => {
+                if (document.getElementById('feedbackMsg')) {
+                    document.getElementById('feedbackMsg').innerHTML = originalText;
+                    document.getElementById('feedbackMsg').style.background = "#e9f3e6";
+                    document.getElementById('feedbackMsg').style.borderLeftColor = "#7cb342";
+                }
+            }, 1700);
+        }
+    }
+
+    function finishQuiz() {
+        // verificare final: toate întrebările au răspuns?
+        let allAnswered = true;
+        for (let i = 0; i < QUESTIONS.length; i++) {
+            if (userAnswers[i] === null) {
+                allAnswered = false;
+                break;
+            }
+        }
+        if (!allAnswered) {
+            // gasim prima intrebare fara raspuns
+            const firstMissing = userAnswers.findIndex(ans => ans === null);
+            currentIndex = firstMissing;
+            renderCurrentQuestion();
+            updateHeaderStats();
+            showTemporaryFeedback(`Mai trebuie să răspunzi la întrebarea ${firstMissing+1}! Nu lăsa misiunea neterminată.`, "warning");
+            return;
+        }
+
+        // totul completat
+        quizCompleted = true;
+        refreshScore();
+        renderFinalScreen();
+    }
+
+    function renderFinalScreen() {
+        const finalScore = totalPointsEarned;
+        let levelTitle = "";
+        let medalEmoji = "";
+        let advice = "";
+
+        if (finalScore >= 0 && finalScore <= 40) {
+            levelTitle = "Mai exersează";
+            medalEmoji = "📘🦸‍♂️";
+            advice = "Nu te opri! Antrenamentul te face puternic. Învață regulile și vei deveni un apărător al siguranței.";
+        } else if (finalScore >= 50 && finalScore <= 80) {
+            levelTitle = "Erou în devenire";
+            medalEmoji = "⭐🦸‍♀️";
+            advice = "Bravo! Ești pe drumul cel bun. Mai ai puțin și devii un Super-erou al Siguranței!";
+        } else if (finalScore >= 90 && finalScore <= 120) {
+            levelTitle = "Super-erou al Siguranței!";
+            medalEmoji = "🏆🦸‍♂️🦸‍♀️🏆";
+            advice = "Felicitări! Demonstrezi că ai grijă de tine și de ceilalți. Ești un adevărat campion al empatiei și autocontrolului!";
+        } else {
+            // fallback
+            levelTitle = "Erou în devenire";
+            medalEmoji = "🦸";
+            advice = "Continuă să înveți! Siguranța este superputerea ta.";
+        }
+
+        const resultHtml = `
+            <div class="result-screen">
+                <div class="result-badge">${medalEmoji}</div>
+                <div class="final-message">SCOR FINAL: ${finalScore} / 120</div>
+                <div class="level-desc">
+                    <h2 style="color:#c45c00;">✨ ${levelTitle} ✨</h2>
+                    <p style="font-size:1.2rem; margin-top:12px;">${advice}</p>
+                </div>
+                <button id="restartQuizBtn" class="reset-btn">🔄 JOACĂ DIN NOU 🔄</button>
+                <div class="feedback" style="margin-top:25px; background:#ffe2b5;">
+                    🎉 Îți mulțumim că ai învățat despre siguranță, empatie și respect online!
+                </div>
+            </div>
+        `;
+        dynamicContainer.innerHTML = resultHtml;
+
+        const restartBtn = document.getElementById('restartQuizBtn');
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => {
+                resetQuiz();
+            });
+        }
+    }
+
+    function resetQuiz() {
+        // resetare stare completa
+        currentIndex = 0;
+        userAnswers = new Array(QUESTIONS.length).fill(null);
+        quizCompleted = false;
+        totalPointsEarned = 0;
+        refreshScore();
+        renderCurrentQuestion();
+        updateHeaderStats();
+        // scroll smooth sus
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // initializare aplicatie
+    function init() {
+        totalQSpan.innerText = QUESTIONS.length;
+        updateHeaderStats();
+        renderCurrentQuestion();
+    }
+
+    init();
+</script>
+</body>
+</html>
