@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Provocarea Autocontrolului – Număr până la 10</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none; /* doar pentru senzație mai curată, nu afectează textul */
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(145deg, #f9e7b3 0%, #f5cda0 100%);
+      font-family: 'Comic Neue', 'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI Emoji', cursive, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .game-container {
+      max-width: 800px;
+      width: 100%;
+      background: #fffef7;
+      border-radius: 80px 60px 80px 60px;
+      box-shadow: 0 25px 40px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255,255,255,0.8);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .game-header {
+      background: #ffb347;
+      padding: 20px 20px 12px 20px;
+      text-align: center;
+      color: #2d1b00;
+      border-bottom: 6px dashed #ffdd99;
+    }
+
+    .game-header h1 {
+      margin: 0;
+      font-size: 2.3rem;
+      letter-spacing: 2px;
+      text-shadow: 3px 3px 0 #ffdd99;
+    }
+
+    .score-board {
+      background: #ffdd99;
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: 1.6rem;
+      font-weight: bold;
+      margin-top: 12px;
+      box-shadow: inset 0 -2px 0 #c28a3e, 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .game-main {
+      padding: 25px 20px 30px;
+    }
+
+    .start-screen {
+      text-align: center;
+      padding: 20px 10px;
+    }
+
+    .start-screen p {
+      font-size: 1.4rem;
+      background: #d9f0ec;
+      display: inline-block;
+      padding: 15px 20px;
+      border-radius: 50px;
+      margin: 20px 0;
+    }
+
+    .btn-start {
+      background: #5cb85c;
+      border: none;
+      font-size: 2rem;
+      font-weight: bold;
+      padding: 15px 35px;
+      border-radius: 60px;
+      color: white;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 8px 0 #2d6a2d;
+      transition: 0.07s linear;
+      margin-top: 15px;
+    }
+
+    .btn-start:active {
+      transform: translateY(4px);
+      box-shadow: 0 4px 0 #2d6a2d;
+    }
+
+    .situation-card {
+      background: #fff2df;
+      border-radius: 60px;
+      padding: 20px 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 0 #e0b07f;
+    }
+
+    .situation-text {
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+      background: white;
+      padding: 20px 12px;
+      border-radius: 50px;
+      margin-bottom: 28px;
+      color: #3b2a1f;
+      border: 2px solid #ffbe76;
+    }
+
+    .reaction-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    /* TOATE BUTOANELE SUNT ABSOLUT IDENTICE CA STIL - fără indicii vizuale! */
+    .reaction-btn {
+      flex: 1;
+      min-width: 210px;
+      padding: 16px 12px;
+      font-size: 1.15rem;
+      font-weight: bold;
+      font-family: inherit;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      background: #f7d9b5;
+      box-shadow: 0 5px 0 #b97f48;
+      color: #2c1c0c;
+      transition: all 0.1s ease;
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .reaction-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #b97f48;
+    }
+
+    .reaction-btn:disabled {
+      opacity: 0.6;
+      transform: none;
+      cursor: not-allowed;
+    }
+
+    .feedback {
+      font-size: 1.5rem;
+      padding: 15px;
+      text-align: center;
+      background: #f9e0a8;
+      border-radius: 50px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+
+    .next-btn {
+      background: #ffa559;
+      font-size: 1.6rem;
+      font-weight: bold;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 50px;
+      margin-top: 15px;
+      width: 100%;
+      cursor: pointer;
+      color: #2e241a;
+      font-family: inherit;
+      transition: 0.07s linear;
+      box-shadow: 0 5px 0 #bd7a3a;
+    }
+
+    .next-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #bd7a3a;
+    }
+
+    .final-message {
+      text-align: center;
+      background: #ffd966;
+      padding: 25px;
+      border-radius: 70px;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #354b1a;
+      margin-top: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    button {
+      transition: 0.1s;
+    }
+
+    @media (max-width: 550px) {
+      .situation-text { font-size: 1.3rem; }
+      .reaction-btn { font-size: 0.95rem; min-width: 140px; padding: 12px 8px; }
+      .game-header h1 { font-size: 1.8rem; }
+      .feedback { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="game-container" id="gameRoot">
+  <div class="game-header">
+    <h1>🧠 Provocarea Autocontrolului 🧘</h1>
+    <div class="score-board">⭐ Scor: <span id="scoreValue">0</span> puncte</div>
+  </div>
+  <div class="game-main" id="gameMain">
+    <!-- Ecranul de start -->
+    <div id="startScreen" class="start-screen">
+      <div>🎈✨</div>
+      <p>Bun venit, campioană / campion!</p>
+      <p>Învață să răspunzi cu <strong>autocontrol</strong> în situații dificile.<br>
+        Alege reacția corectă! 🦸‍♀️🦸‍♂️</p>
+      <button class="btn-start" id="startBtn">🚀 Începe provocarea 🚀</button>
+    </div>
+
+    <!-- Zona jocului -->
+    <div id="quizArea" class="hidden">
+      <div class="situation-card">
+        <div class="situation-text" id="situationText">Încarcă...</div>
+        <div class="reaction-buttons" id="reactionButtons"></div>
+      </div>
+
+      <div id="feedbackMsg" class="feedback"></div>
+      <button class="next-btn" id="nextBtn">➡ Următoarea situație ⬅</button>
+    </div>
+
+    <!-- ecran final -->
+    <div id="finalScreen" class="hidden">
+      <div class="final-message">
+        🎉🏆 Ești Super-eroul Autocontrolului! 🏆🎉<br>
+        ⭐ Scor final: <span id="finalScoreSpan">0</span> puncte ⭐
+      </div>
+      <button class="btn-start" id="restartBtn" style="margin: 30px auto; display: block;">🔄 Joacă din nou</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- Situații de conflict (offline + online) pentru 8–10 ani ----------
+  // Fiecare situație are 3 variante de reacție: una impulsivă, una de ignorare, una de autocontrol.
+  // Varianta corectă este întotdeauna cea care învață autocontrolul sau o reacție sănătoasă.
+  // IMPORTANT: Butoanele sunt complet identice ca stil - fără emoji-uri distinctive, fără prefixe precum "Impulsiv:", "Autocontrol:".
+  // Elevii trebuie să CITEASCĂ toată reacția pentru a înțelege ce fel de comportament descrie.
+  // Ordinea butoanelor este randomizată la fiecare încărcare pentru a evita memorarea poziției.
+  const SITUATII = [
+    {
+      text: "🐱 Colegul tău îți ia fără permisiune radierea din penar și o rupe din joacă. Ce faci?",
+      impuls: "Îi trag un picior în scaun și țip la el.",
+      ignor: "Nu spun nimic, dar mă îmbufnez toată ziua și nu mai vorbesc cu nimeni.",
+      control: "Respir adânc și îi spun calm: „Nu-mi place ce ai făcut. Hai să vorbim.”",
+      corectType: "control"
+    },
+    {
+      text: "📱 Pe un grup de WhatsApp, un coleg scrie o glumă urâtă despre tine. Ce reacție ai?",
+      impuls: "Răspund imediat cu o insultă și mai rea.",
+      ignor: "Nu răspund, dar șterg aplicația și plâng în secret.",
+      control: "Ignor provocarea, vorbesc în privat cu un adult și scriu un mesaj calm grupului.",
+      corectType: "control"
+    },
+    {
+      text: "🎮 La un joc online, alt jucător îți spune că ești „cel mai prost jucător”. Ce faci?",
+      impuls: "Îi trimit 10 mesaje cu cuvinte urâte.",
+      ignor: "Mă deconectez și mă simt trist toată seara.",
+      control: "Îi spun „Fiecare are păreri”, apoi blochez și mă concentrez pe distracție.",
+      corectType: "control"
+    },
+    {
+      text: "🧸 Sora mai mică îți strică turnul construit din cărți de joc. Ești supărat. Ce alegi?",
+      impuls: "O împing și îi iau jucăria preferată.",
+      ignor: "Mă duc în cameră și trântesc ușa fără să vorbesc.",
+      control: "Mă opresc, număr până la 5 în gând și zic: „Te rog să nu mai faci asta, mă întristează.”",
+      corectType: "control"
+    },
+    {
+      text: "💬 Prietenul tău spune o minciună despre tine la școală. Cum reacționezi?",
+      impuls: "Îl lovesc cu ghiozdanul în fața tuturor.",
+      ignor: "Nu fac nimic, dar nu mai am încredere în nimeni.",
+      control: "Rămân calm, cer să vorbim în privat și îi spun cum mă simt.",
+      corectType: "control"
+    },
+    {
+      text: "🌐 Cineva postează un comentariu răutăcios la poza ta online. Reacția ta?",
+      impuls: "Răspund cu aceleași cuvinte și cu litere mari.",
+      ignor: "Șterg poza și nu mai postez niciodată.",
+      control: "Raportez comentariul, nu mă cert și vorbesc cu părinții mei.",
+      corectType: "control"
+    },
+    {
+      text: "🍕 La masă, fratele tău ia ultima felie de pizza pe care ți-o doreai. Ce faci?",
+      impuls: "Smulg farfuria din mâna lui și țip.",
+      ignor: "Mă retrag supărat și nu mai mănânc nimic.",
+      control: "Respir adânc, zâmbesc și spun: „Poate data viitoare împărțim. Îmi place pizza la fel de mult ca tine.”",
+      corectType: "control"
+    },
+    {
+      text: "📵 Părinții îți opresc internetul pentru că ai stat prea mult pe tabletă. Te enervezi. Ce reacție ai?",
+      impuls: "Arunc tableta pe canapea și urlu.",
+      ignor: "Plec trântind ușa și nu mai vorbesc toată seara.",
+      control: "Fac o pauză, număr până la 10, apoi îi rog frumos să stabilim împreună o limită de timp.",
+      corectType: "control"
+    }
+  ];
+
+  // Stare joc
+  let currentIndex = 0;
+  let score = 0;
+  let quizActive = false;
+  let waitingForNext = false;      // după răspuns corect, așteptăm next
+  let currentShuffledOptions = []; // array cu { type, textDisplay }
+  let currentCorrectType = "";
+
+  // elemente DOM
+  const startScreenDiv = document.getElementById('startScreen');
+  const quizAreaDiv = document.getElementById('quizArea');
+  const finalScreenDiv = document.getElementById('finalScreen');
+  const situationTextSpan = document.getElementById('situationText');
+  const reactionButtonsDiv = document.getElementById('reactionButtons');
+  const feedbackMsgDiv = document.getElementById('feedbackMsg');
+  const nextBtn = document.getElementById('nextBtn');
+  const scoreSpan = document.getElementById('scoreValue');
+  const finalScoreSpan = document.getElementById('finalScoreSpan');
+  const restartBtn = document.getElementById('restartBtn');
+  const startBtn = document.getElementById('startBtn');
+
+  function updateScoreUI() {
+    scoreSpan.innerText = score;
+  }
+
+  // Amestecă opțiunile pentru situația curentă - FĂRĂ niciun indiciu vizual (emoji, prefixe)
+  function shuffleOptionsForCurrentSituation() {
+    const situ = SITUATII[currentIndex];
+    // Construim textul doar din conținutul reacției, fără niciun cuvânt suplimentar gen "Impulsiv:".
+    // Astfel, elevul trebuie să citească și să interpreteze dacă reacția este impulsivă, ignorare sau autocontrol.
+    const options = [
+      { type: "impuls", text: situ.impuls },
+      { type: "ignor", text: situ.ignor },
+      { type: "control", text: situ.control }
+    ];
+    // Fisher-Yates shuffle pentru a randomiza ordinea butoanelor
+    for (let i = options.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [options[i], options[j]] = [options[j], options[i]];
+    }
+    currentShuffledOptions = options;
+    currentCorrectType = situ.corectType;
+  }
+
+  function loadSituation() {
+    if (!quizActive) return;
+    shuffleOptionsForCurrentSituation();
+    const situ = SITUATII[currentIndex];
+    situationTextSpan.innerText = situ.text;
+    
+    // Construim butoanele - toate au același aspect vizual, fără emoji-uri distinctive
+    reactionButtonsDiv.innerHTML = '';
+    for (let opt of currentShuffledOptions) {
+      const btn = document.createElement('button');
+      btn.className = 'reaction-btn';
+      // Afișăm doar textul reacției, fără prefixe sau indicii
+      let displayText = opt.text;
+      if (displayText.length > 90) displayText = displayText.substring(0, 87) + "...";
+      btn.innerText = displayText;
+      btn.setAttribute('data-type', opt.type);
+      btn.addEventListener('click', () => handleReaction(opt.type));
+      reactionButtonsDiv.appendChild(btn);
+    }
+    waitingForNext = false;
+    disableReactionButtons(false);
+    feedbackMsgDiv.innerHTML = "🤔 Alege o reacție... Gândește-te bine! 🤔";
+  }
+
+  function handleReaction(chosenType) {
+    if (!quizActive || waitingForNext) {
+      if (!quizActive) return;
+      feedbackMsgDiv.innerHTML = "😅 Apasă 'Următoarea situație' pentru a continua!";
+      return;
+    }
+
+    const isCorrect = (chosenType === currentCorrectType);
+    if (isCorrect) {
+      // Răspuns corect
+      score += 10;
+      updateScoreUI();
+      feedbackMsgDiv.innerHTML = "✅ ✅ ✅ <strong>Super! Ai folosit metoda STOP!</strong> ✅ ✅ ✅<br> +10 puncte! 🎉";
+      waitingForNext = true;
+      disableReactionButtons(true);
+      if (currentIndex + 1 >= SITUATII.length) {
+        nextBtn.innerText = "🏁 Vezi rezultat final 🏁";
+      } else {
+        nextBtn.innerText = "➡ Următoarea situație ⬅";
+      }
+    } else {
+      // Răspuns greșit - încurajăm să încerce din nou pe aceeași situație
+      feedbackMsgDiv.innerHTML = "❌ <strong>Încearcă din nou. Respiră și numără până la 10!</strong> ❌<br>🌿 Alege varianta mai bună pentru autocontrol! 🌿";
+      waitingForNext = false;
+      disableReactionButtons(false);
+      // Nu se scad puncte, elevul poate reîncerca
+    }
+  }
+
+  function disableReactionButtons(disabled) {
+    const btns = reactionButtonsDiv.querySelectorAll('.reaction-btn');
+    btns.forEach(btn => {
+      if (disabled) btn.disabled = true;
+      else btn.disabled = false;
+    });
+  }
+
+  function nextSituation() {
+    if (!quizActive) return;
+    if (!waitingForNext) {
+      feedbackMsgDiv.innerHTML = "❗ Te rog să alegi mai întâi o reacție la situație! ❗";
+      return;
+    }
+    if (currentIndex + 1 < SITUATII.length) {
+      currentIndex++;
+      waitingForNext = false;
+      loadSituation();
+    } else {
+      endGame();
+    }
+  }
+
+  function endGame() {
+    quizActive = false;
+    quizAreaDiv.classList.add('hidden');
+    finalScreenDiv.classList.remove('hidden');
+    finalScoreSpan.innerText = score;
+  }
+
+  function restartGame() {
+    currentIndex = 0;
+    score = 0;
+    waitingForNext = false;
+    updateScoreUI();
+    quizActive = false;
+    startScreenDiv.classList.remove('hidden');
+    quizAreaDiv.classList.add('hidden');
+    finalScreenDiv.classList.add('hidden');
+    feedbackMsgDiv.innerHTML = "";
+    nextBtn.innerText = "➡ Următoarea situație ⬅";
+  }
+
+  function startQuiz() {
+    restartGame(); 
+    startScreenDiv.classList.add('hidden');
+    quizAreaDiv.classList.remove('hidden');
+    finalScreenDiv.classList.add('hidden');
+    quizActive = true;
+    currentIndex = 0;
+    score = 0;
+    waitingForNext = false;
+    updateScoreUI();
+    loadSituation();
+  }
+
+  // Evenimente
+  startBtn.addEventListener('click', startQuiz);
+  nextBtn.addEventListener('click', nextSituation);
+  restartBtn.addEventListener('click', () => {
+    restartGame();
+    startScreenDiv.classList.remove('hidden');
+    quizAreaDiv.classList.add('hidden');
+    finalScreenDiv.classList.add('hidden');
+  });
+
+  // Inițializare vizuală
+  startScreenDiv.classList.remove('hidden');
+  quizAreaDiv.classList.add('hidden');
+  finalScreenDiv.classList.add('hidden');
+  scoreSpan.innerText = "0";
+</script>
+</body>
+</html>
